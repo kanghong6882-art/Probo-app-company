@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenius Tech • Malaysia & Brunei Branch PROBO Orders</title>
+    <meta name="theme-color" content="#1b365d">
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 25px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .brand-tag {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #1b365d;
+            margin-bottom: 4px;
+        }
+        h1 {
+            text-align: center;
+            color: #1b365d;
+            margin: 0 0 6px 0;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .admin-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            background-color: #eef2f5;
+            border: 1px solid #d5dde5;
+        }
+        .admin-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .branch-picker {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e0;
+        }
+        .branch-picker select {
+            border: none;
+            font-weight: 700;
+            color: #1b365d;
+            font-size: 13px;
+            padding: 3px 6px;
+            background: transparent;
+            cursor: pointer;
+        }
+        .branch-info-strip {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px 14px;
+            margin-bottom: 16px;
+            font-size: 12.5px;
+            color: #475569;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .mode-pill {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .mode-view { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .mode-branch { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .mode-host { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .db-status { font-size: 12px; color: #555; font-weight: 500; }
+        .admin-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-unlock { background-color: #1b365d; color: #fff; }
+        .btn-lock { background-color: #7f8c8d; color: #fff; }
+        .btn-refresh { background-color: #2980b9; color: #fff; }
+        .btn-pack { background-color: #d35400; color: #fff; }
+        .btn-pack:hover { background-color: #a04000; }
+        .btn-sheet {
+            background-color: #1e8449;
+            color: #fff;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .admin-only-hidden { display: none !important; }
+        .view-only-notice {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 18px;
+            background-color: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 6px;
+            color: #6d4c00;
+            font-size: 13px;
+        }
+        .packing-panel {
+            background: #fffaf2;
+            border: 2px solid #f39c12;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+        }
+        .packing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .packing-header h3 { margin: 0; color: #b9770e; font-size: 16px; }
+        .packing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 8px;
+        }
+        .pack-chip {
+            background: #fff;
+            border: 1px solid #fad7a0;
+            border-radius: 6px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        .pack-chip strong { color: #d35400; font-size: 15px; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .form-group { display: flex; flex-direction: column; }
+        label { font-weight: 600; margin-bottom: 5px; font-size: 14px; }
+        input, select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: #fff;
+        }
+        .status-btn {
+            padding: 5px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .status-btn.readonly { cursor: default; opacity: 0.9; }
+        .badge-paid { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .badge-unpaid { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .badge-topack { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .badge-packed { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .badge-done { background-color: #cce5ff; color: #004085; border: 1px solid #b8daff; }
+        tr.row-done { background-color: #f0f9f4 !important; }
+        .items-section {
+            margin-bottom: 20px;
+            padding: 18px;
+            background-color: #f9fbfb;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+        }
+        .catalog-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .category-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+        .tab-btn {
+            padding: 8px 14px;
+            border: 1px solid #cbd5e0;
+            background-color: #fff;
+            color: #1b365d;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .tab-btn.active { background-color: #1b365d; color: #fff; border-color: #1b365d; }
+        .search-box { flex: 1; min-width: 220px; max-width: 320px; }
+        .search-box input { width: 100%; box-sizing: border-box; padding: 8px 12px; }
+        .item-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .item-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #dce3e8;
+            border-radius: 6px;
+            padding: 10px 12px;
+        }
+        .item-card.selected { border-color: #2980b9; background-color: #eef7fc; }
+        .item-info { display: flex; flex-direction: column; padding-right: 8px; }
+        .item-badge { font-size: 10px; text-transform: uppercase; font-weight: 700; color: #7f8c8d; }
+        .item-name { font-weight: 600; font-size: 14px; color: #2c3e50; margin-top: 2px; }
+        .item-price { font-size: 13px; color: #16a085; font-weight: 600; margin-top: 2px; }
+        .qty-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .qty-btn {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border: 1px solid #bbb;
+            background-color: #f0f3f4;
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .qty-input {
+            width: 48px;
+            height: 30px;
+            padding: 2px 4px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 14px;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .custom-row { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-top: 15px; }
+        .live-summary {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background-color: #1b365d;
+            color: #fff;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .live-summary-items { font-size: 13px; color: #ecf0f1; flex: 1; }
+        .live-summary-total { font-size: 18px; font-weight: 700; color: #2ecc71; white-space: nowrap; }
+        .btn-group { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+        button.action-btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-add { background-color: #2980b9; color: white; }
+        .btn-export { background-color: #27ae60; color: white; }
+        .btn-clear { background-color: #c0392b; color: white; margin-left: auto; }
+        .table-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .table-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+        .table-filters input, .table-filters select { padding: 7px 12px; font-size: 13px; }
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 14px; }
+        th { background-color: #1b365d; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .delete-row-btn {
+            background-color: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+        .modal-backdrop.open { display: flex; }
+        .modal-box {
+            background: #fff;
+            padding: 24px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 340px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            text-align: center;
+        }
+        .modal-box h3 { margin-top: 0; color: #1b365d; }
+        .modal-box input {
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 18px;
+            letter-spacing: 4px;
+            margin: 12px 0;
+        }
+        .modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="brand-tag">ZENIUS TECH • MALAYSIA & BRUNEI BRANCH NETWORK</div>
+    <h1>PROBO Student Purchase Recording</h1>
+    <div class="subtitle">Branch Order Collection → Live Sync to Kulai HQ Warehouse Packing</div>
+
+    <div class="admin-bar">
+        <div class="admin-status">
+            <div class="branch-picker">
+                <span>📍 Branch:</span>
+                <select id="branchSelect" onchange="onBranchChanged()">
+                    <option value="ALL" id="allBranchesOpt" disabled>🌐 ALL BRANCHES (Kulai HQ Master)</option>
+                    <optgroup label="Johor (Malaysia)">
+                        <option value="MY_Kulai_HQ">Kulai (Headquarters / Kulaijaya)</option>
+                        <option value="MY_Bukit_Indah">Bukit Indah (Johor Bahru)</option>
+                        <option value="MY_Taman_Gaya">Taman Gaya (Ulu Tiram)</option>
+                        <option value="MY_Mutiara_Mas">Mutiara Mas (Skudai)</option>
+                        <option value="MY_Simpang_Renggam">Simpang Renggam</option>
+                        <option value="MY_Muar">Muar</option>
+                        <option value="MY_Segamat">Segamat</option>
+                    </optgroup>
+                    <optgroup label="KL & Selangor (Malaysia)">
+                        <option value="MY_Sri_Petaling">Sri Petaling (KL)</option>
+                        <option value="MY_Kepong">Kepong (Taman Ehsan)</option>
+                        <option value="MY_Bukit_Jelutong">Bukit Jelutong (Shah Alam)</option>
+                        <option value="MY_Setia_Alam">Setia Alam (Shah Alam)</option>
+                    </optgroup>
+                    <optgroup label="Negeri Sembilan (Malaysia)">
+                        <option value="MY_Seremban">Seremban (Oasis)</option>
+                        <option value="MY_Bahau">Bahau</option>
+                    </optgroup>
+                    <optgroup label="Kedah & Sarawak (Malaysia)">
+                        <option value="MY_Alor_Setar">Alor Setar (Kedah)</option>
+                        <option value="MY_Miri">Miri (Sarawak)</option>
+                    </optgroup>
+                    <optgroup label="Brunei Darussalam">
+                        <option value="BN_Gadong_Central">Gadong Central (BSB)</option>
+                        <option value="BN_Kuala_Belait">Kuala Belait</option>
+                        <option value="BN_Sengkurong">Sengkurong</option>
+                    </optgroup>
+                </select>
+            </div>
+            <span id="modeBadge" class="mode-pill mode-view">🔒 View-Only</span>
+            <span id="dbStatusText" class="db-status">Connecting...</span>
+        </div>
+        <div class="admin-controls">
+            <button type="button" id="togglePackBtn" class="btn-sm btn-pack admin-only-hidden" onclick="togglePackingPanel()">📦 HQ Packing List</button>
+            <a id="openSheetBtn" href="https://docs.google.com/spreadsheets/d/1NlmOGPOW3e3ES_oO9AMwJtZZyS3-JEdLvkHHgolp7EM/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer" class="btn-sm btn-sheet admin-only-hidden">📊 Open Master Sheet</a>
+            <button type="button" class="btn-sm btn-refresh" onclick="loadFromDatabase()">↻ Sync Now</button>
+            <button type="button" id="unlockBtn" class="btn-sm btn-unlock" onclick="openPinModal()">Branch / Host Login</button>
+            <button type="button" id="lockBtn" class="btn-sm btn-lock admin-only-hidden" onclick="lockAdmin()">Lock</button>
+        </div>
+    </div>
+
+    <div class="branch-info-strip">
+        <span id="branchAddressText">🏢 Shipping Address: -</span>
+        <span id="branchCurrencyText">💱 Currency: RM</span>
+    </div>
+
+    <div id="packingPanel" class="packing-panel admin-only-hidden">
+        <div class="packing-header">
+            <h3 id="packingPanelTitle">📦 Warehouse Picking List (All "To Pack" Orders)</h3>
+            <button type="button" class="btn-sm btn-export" onclick="exportPackingList()">Export Picking List (.xlsx)</button>
+        </div>
+        <div id="packingGrid" class="packing-grid"></div>
+    </div>
+
+    <div id="viewOnlyNotice" class="view-only-notice">
+        Viewing live orders for <strong id="noticeBranchName">this branch</strong>. Log in with your <strong>Branch PIN</strong> to send student orders to Kulai HQ, or <strong>HQ Host PIN</strong> to pack orders.
+    </div>
+
+    <form id="recordForm" class="admin-only-hidden">
+        <div class="form-grid">
+            <div class="form-group" id="targetBranchFormGroup">
+                <label for="orderBranchSelect">Order For Branch</label>
+                <select id="orderBranchSelect" onchange="onOrderBranchSelectChange()"></select>
+            </div>
+            <div class="form-group">
+                <label for="studentName">Student Name</label>
+                <input type="text" id="studentName" placeholder="e.g., Ali Bin Ahmad" required>
+            </div>
+            <div class="form-group">
+                <label for="paymentStatus">Payment Status</label>
+                <select id="paymentStatus">
+                    <option value="Unpaid">Unpaid</option>
+                    <option value="Paid">Paid</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="recordDateTime">Date & Time</label>
+                <input type="datetime-local" id="recordDateTime" required>
+            </div>
+        </div>
+
+        <div class="items-section">
+            <div class="catalog-controls">
+                <div class="category-tabs">
+                    <button type="button" class="tab-btn active" onclick="setCategory('All', this)">All (82)</button>
+                    <button type="button" class="tab-btn" onclick="setCategory('Blocks', this)">Blocks (40)</button>
+                    <button type="button" class="tab-btn" onclick="setCategory('Electronics & Others', this)">Electronics & Others (42)</button>
+                    <button type="button" class="tab-btn" onclick="setCategory('Selected', this)">Selected Only</button>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search item name (e.g., Pintool, Motor, LED)..." oninput="renderCatalog()">
+                </div>
+            </div>
+
+            <div class="item-list" id="itemList"></div>
+
+            <div class="custom-row">
+                <div class="form-group">
+                    <label for="customItem">Other Item / Notes (Optional)</label>
+                    <input type="text" id="customItem" placeholder="Enter any extra item or remarks" oninput="updateLiveSummary()">
+                </div>
+                <div class="form-group">
+                    <label for="customPrice">Other Item Price (<span id="customCurrLabel">RM</span>)</label>
+                    <input type="number" id="customPrice" step="0.10" min="0" placeholder="0.00" oninput="updateLiveSummary()">
+                </div>
+            </div>
+
+            <div class="live-summary">
+                <div class="live-summary-items" id="liveItemsText">No items selected</div>
+                <div class="live-summary-total">Total: <span id="liveCurrLabel">RM</span> <span id="liveTotalAmount">0.00</span></div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" id="submitRecordBtn" class="action-btn btn-add">+ Submit Branch Order to HQ</button>
+            <button type="button" class="action-btn btn-export" onclick="exportToExcel()">Export Branch Excel</button>
+            <button type="button" id="clearAllBtn" class="action-btn btn-clear admin-only-hidden" onclick="clearAllRecords()">Clear All Records (HQ Host)</button>
+        </div>
+    </form>
+
+    <div id="publicBtnGroup" class="btn-group">
+        <button type="button" class="action-btn btn-export" onclick="exportToExcel()">Export Branch Excel</button>
+    </div>
+
+    <div class="table-header-bar">
+        <strong><span id="tableBranchTitle">Branch</span> Orders (<span id="recordCount">0</span>)</strong>
+        <div class="table-filters">
+            <select id="packFilter" onchange="renderTable()">
+                <option value="ALL">All Packing Statuses</option>
+                <option value="To Pack">⏳ To Pack Only</option>
+                <option value="Packed">📦 Packed Only</option>
+                <option value="Done">✓ Arrived / Done</option>
+            </select>
+            <input type="text" id="studentFilterInput" placeholder="Search student name..." oninput="renderTable()">
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <table id="recordsTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Branch</th>
+                    <th>Date & Time</th>
+                    <th>Student Name</th>
+                    <th>Items to Pack (Qty & Subtotal)</th>
+                    <th>Total</th>
+                    <th>Payment</th>
+                    <th>HQ Packing / Arrival</th>
+                    <th>Updated By</th>
+                    <th class="admin-col admin-only-hidden">Action</th>
+                </tr>
+            </thead>
+            <tbody id="recordsBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="pinModal" class="modal-backdrop">
+    <div class="modal-box">
+        <h3 id="pinModalTitle">Branch Login</h3>
+        <p id="pinModalSub" style="font-size: 13px; color: #666; margin: 0;">Enter your Branch PIN or Kulai HQ Host PIN.</p>
+        <input type="password" id="pinInput" inputmode="numeric" placeholder="••••••" onkeydown="if(event.key==='Enter') submitPin()">
+        <div id="pinError" style="color: #c0392b; font-size: 13px; min-height: 18px;"></div>
+        <div class="modal-actions">
+            <button type="button" class="btn-sm btn-unlock" id="pinSubmitBtn" onclick="submitPin()">Unlock</button>
+            <button type="button" class="btn-sm btn-lock" onclick="closePinModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwP-X5u-lgVRuK0RDJZinatK9iAtUn-3ltni0bxCg6sJcCf4r0szeQcFe2qleBS9CPCvw/exec";
+
+    const BRANCHES = {
+        "MY_Kulai_HQ": { name: "Kulai (Headquarters / Kulaijaya)", currency: "RM", address: "No. 215A, Jalan Kenanga 29/2, Bandar Indahpura, 81000 Kulai, Johor" },
+        "MY_Bukit_Indah": { name: "Bukit Indah (Johor Bahru)", currency: "RM", address: "No. 18A, Jalan Indah 15/3, Taman Bukit Indah, 81200 Johor Bahru, Johor" },
+        "MY_Taman_Gaya": { name: "Taman Gaya (Ulu Tiram)", currency: "RM", address: "No. 22A, Jalan Gaya 1, Taman Gaya, 81800 Ulu Tiram, Johor" },
+        "MY_Mutiara_Mas": { name: "Mutiara Mas (Skudai)", currency: "RM", address: "No. 33A, Jalan Mutiara 1/2, Taman Mutiara Mas, 81300 Skudai, Johor" },
+        "MY_Simpang_Renggam": { name: "Simpang Renggam", currency: "RM", address: "No. 12A, Jalan Kijang, Taman Mohd Yassin, 86200 Simpang Renggam, Johor" },
+        "MY_Muar": { name: "Muar", currency: "RM", address: "No. 45A, Jalan Perniagaan Jaya, Pusat Perniagaan Mas Jaya, 84000 Muar, Johor" },
+        "MY_Segamat": { name: "Segamat", currency: "RM", address: "No. 19A, Jalan Utama 3/4, Pusat Komersial Sri Utama, 85000 Segamat, Johor" },
+        "MY_Sri_Petaling": { name: "Sri Petaling (KL)", currency: "RM", address: "No. 88-1, Jalan Radin Bagus, Bandar Baru Sri Petaling, 57000 Kuala Lumpur" },
+        "MY_Kepong": { name: "Kepong (Taman Ehsan)", currency: "RM", address: "No. 15A, Jalan Ehsan Utama, Taman Ehsan, 52100 Kepong, Kuala Lumpur" },
+        "MY_Bukit_Jelutong": { name: "Bukit Jelutong (Shah Alam)", currency: "RM", address: "No. 24A, Jalan Bazar U8/99, Bukit Jelutong, 40150 Shah Alam, Selangor" },
+        "MY_Setia_Alam": { name: "Setia Alam (Shah Alam)", currency: "RM", address: "No. 10-1, Jalan Setia Prima (A) U13/A, Setia Alam, 40170 Shah Alam, Selangor" },
+        "MY_Seremban": { name: "Seremban (Oasis)", currency: "RM", address: "No. 31-1, Jalan S2 B16, Pusat Dagangan Seremban 2, 70300 Seremban, Negeri Sembilan" },
+        "MY_Bahau": { name: "Bahau", currency: "RM", address: "No. 14A, Jalan Kiara 1, Pusat Perniagaan Kiara, 72100 Bahau, Negeri Sembilan" },
+        "MY_Alor_Setar": { name: "Alor Setar (Kedah)", currency: "RM", address: "No. 27A, Kompleks Perniagaan Sultan Abdul Hamid, 05050 Alor Setar, Kedah" },
+        "MY_Miri": { name: "Miri (Sarawak)", currency: "RM", address: "Lot 1234, 1st Floor, Marina ParkCity Phase 2, 98000 Miri, Sarawak" },
+        "BN_Gadong_Central": { name: "Gadong Central (BSB)", currency: "BND", address: "Unit 8, 1st Floor, Block B, Gadong Central, BE4119 Bandar Seri Begawan, Brunei" },
+        "BN_Kuala_Belait": { name: "Kuala Belait", currency: "BND", address: "Unit 4, 1st Floor, Jalan Pretty, KA1131 Kuala Belait, Brunei" },
+        "BN_Sengkurong": { name: "Sengkurong", currency: "BND", address: "Unit 11, 1st Floor, Simpang 588, Jalan Tutong, BG1121 Sengkurong, Brunei" }
+    };
+
+    const rawCatalog = [
+        { id: 'blk_1', category: 'Blocks', name: 'Pintool', packPrice: 10.0, packSize: 1 },
+        { id: 'blk_2', category: 'Blocks', name: 'Pintool Upgrade Kit', packPrice: 16.0, packSize: 1 },
+        { id: 'blk_3', category: 'Blocks', name: 'Block 7 x 11', packPrice: 10.0, packSize: 1 },
+        { id: 'blk_4', category: 'Blocks', name: 'Block 5 x 7', packPrice: 8.0, packSize: 1 },
+        { id: 'blk_5', category: 'Blocks', name: 'Block 3 x 9', packPrice: 9.0, packSize: 2 },
+        { id: 'blk_6', category: 'Blocks', name: 'Block 3 x 7', packPrice: 8.0, packSize: 2 },
+        { id: 'blk_7', category: 'Blocks', name: 'Block 3 x 5', packPrice: 7.0, packSize: 2 },
+        { id: 'blk_8', category: 'Blocks', name: 'Block 3 x 3', packPrice: 7.0, packSize: 2 },
+        { id: 'blk_9', category: 'Blocks', name: 'Block 2 x 11', packPrice: 9.0, packSize: 2 },
+        { id: 'blk_10', category: 'Blocks', name: 'Block 2 x 9', packPrice: 8.0, packSize: 2 },
+        { id: 'blk_11', category: 'Blocks', name: 'Block 2 x 7', packPrice: 7.0, packSize: 2 },
+        { id: 'blk_12', category: 'Blocks', name: 'Block 2 x 5', packPrice: 7.0, packSize: 2 },
+        { id: 'blk_13', category: 'Blocks', name: 'Block 1 x 9', packPrice: 7.0, packSize: 2 },
+        { id: 'blk_14', category: 'Blocks', name: 'Block 1 x 7', packPrice: 6.0, packSize: 2 },
+        { id: 'blk_15', category: 'Blocks', name: 'Block 1 x 5', packPrice: 7.0, packSize: 3 },
+        { id: 'blk_16', category: 'Blocks', name: 'Block 1 x 3', packPrice: 6.0, packSize: 3 },
+        { id: 'blk_17', category: 'Blocks', name: 'Slide Block', packPrice: 6.0, packSize: 2 },
+        { id: 'blk_18', category: 'Blocks', name: 'Edge Block', packPrice: 7.0, packSize: 2 },
+        { id: 'blk_19', category: 'Blocks', name: 'Block L 6 x 9', packPrice: 8.0, packSize: 2 },
+        { id: 'blk_20', category: 'Blocks', name: 'Block L 2 x 4', packPrice: 7.0, packSize: 3 },
+        { id: 'blk_21', category: 'Blocks', name: 'Block L 2 x 2', packPrice: 6.0, packSize: 3 },
+        { id: 'blk_22', category: 'Blocks', name: 'Block L 1 x 3', packPrice: 6.0, packSize: 3 },
+        { id: 'blk_23', category: 'Blocks', name: 'Caterpillar Rubber (50)', packPrice: 91.0, packSize: 1 },
+        { id: 'blk_24', category: 'Blocks', name: 'Caterpillar (100)', packPrice: 122.0, packSize: 1 },
+        { id: 'blk_25', category: 'Blocks', name: 'Tooth Block', packPrice: 8.0, packSize: 1 },
+        { id: 'blk_26', category: 'Blocks', name: 'Arc Block', packPrice: 9.0, packSize: 2 },
+        { id: 'blk_27', category: 'Blocks', name: 'Triangular Block', packPrice: 5.0, packSize: 2 },
+        { id: 'blk_28', category: 'Blocks', name: 'Conversion Block', packPrice: 4.0, packSize: 2 },
+        { id: 'blk_29', category: 'Blocks', name: 'Wheel Block', packPrice: 8.0, packSize: 1 },
+        { id: 'blk_30', category: 'Blocks', name: 'Block Tire Rubber', packPrice: 10.0, packSize: 1 },
+        { id: 'blk_31', category: 'Blocks', name: 'Hinge Block B (Orange)', packPrice: 7.0, packSize: 2 },
+        { id: 'blk_32', category: 'Blocks', name: 'Hinge Block A (Yellow)', packPrice: 7.0, packSize: 2 },
+        { id: 'blk_33', category: 'Blocks', name: 'Spacer Block', packPrice: 11.0, packSize: 10 },
+        { id: 'blk_34', category: 'Blocks', name: 'Round Block', packPrice: 7.0, packSize: 2 },
+        { id: 'blk_35', category: 'Blocks', name: 'Dual Pin', packPrice: 7.0, packSize: 10 },
+        { id: 'blk_36', category: 'Blocks', name: 'Step Pin', packPrice: 7.0, packSize: 10 },
+        { id: 'blk_37', category: 'Blocks', name: 'Link Pin', packPrice: 6.0, packSize: 10 },
+        { id: 'blk_38', category: 'Blocks', name: 'Three Pin', packPrice: 11.0, packSize: 15 },
+        { id: 'blk_39', category: 'Blocks', name: 'Two Pin', packPrice: 6.0, packSize: 10 },
+        { id: 'blk_40', category: 'Blocks', name: 'Eye Block', packPrice: 13.0, packSize: 2 },
+
+        { id: 'ele_1', category: 'Electronics & Others', name: 'USB Downloader', packPrice: 78.0, packSize: 1 },
+        { id: 'ele_2', category: 'Electronics & Others', name: 'RF Receiver', packPrice: 91.0, packSize: 1 },
+        { id: 'ele_3', category: 'Electronics & Others', name: 'RF Controller', packPrice: 202.0, packSize: 1 },
+        { id: 'ele_4', category: 'Electronics & Others', name: 'Rechargeable Battery', packPrice: 152.0, packSize: 1 },
+        { id: 'ele_5', category: 'Electronics & Others', name: 'Battery Block', packPrice: 28.0, packSize: 1 },
+        { id: 'ele_6', category: 'Electronics & Others', name: 'Servo Motor Red', packPrice: 134.0, packSize: 1 },
+        { id: 'ele_7', category: 'Electronics & Others', name: 'Motor Blue', packPrice: 82.0, packSize: 1 },
+        { id: 'ele_8', category: 'Electronics & Others', name: 'Motor Yellow', packPrice: 82.0, packSize: 1 },
+        { id: 'ele_9', category: 'Electronics & Others', name: 'Jumper Wire', packPrice: 2.0, packSize: 1 },
+        { id: 'ele_10', category: 'Electronics & Others', name: 'Connect 3 pin cable', packPrice: 12.0, packSize: 2 },
+        { id: 'ele_11', category: 'Electronics & Others', name: 'Connect Power Cable', packPrice: 10.0, packSize: 2 },
+        { id: 'ele_12', category: 'Electronics & Others', name: 'Connect 3 pin long cable', packPrice: 10.0, packSize: 1 },
+        { id: 'ele_13', category: 'Electronics & Others', name: 'Connect Motor Cable', packPrice: 10.0, packSize: 2 },
+        { id: 'ele_14', category: 'Electronics & Others', name: 'FND Block', packPrice: 60.0, packSize: 1 },
+        { id: 'ele_15', category: 'Electronics & Others', name: 'IR Block', packPrice: 34.0, packSize: 1 },
+        { id: 'ele_16', category: 'Electronics & Others', name: 'LED Red', packPrice: 34.0, packSize: 1 },
+        { id: 'ele_17', category: 'Electronics & Others', name: 'LED Blue', packPrice: 34.0, packSize: 1 },
+        { id: 'ele_18', category: 'Electronics & Others', name: 'CPU Board', packPrice: 200.0, packSize: 1 },
+        { id: 'ele_19', category: 'Electronics & Others', name: 'Switch Block', packPrice: 34.0, packSize: 1 },
+        { id: 'ele_20', category: 'Electronics & Others', name: 'Acceration Sensor', packPrice: 109.0, packSize: 1 },
+        { id: 'ele_21', category: 'Electronics & Others', name: 'Ultrasonic Sensor', packPrice: 109.0, packSize: 1 },
+        { id: 'ele_22', category: 'Electronics & Others', name: 'Rubber Switch', packPrice: 34.0, packSize: 1 },
+        { id: 'ele_23', category: 'Electronics & Others', name: 'Heart Rate Sesnor', packPrice: 47.0, packSize: 1 },
+        { id: 'ele_24', category: 'Electronics & Others', name: 'LED White', packPrice: 34.0, packSize: 1 },
+        { id: 'ele_25', category: 'Electronics & Others', name: 'Infinite Rotation Sensor', packPrice: 91.0, packSize: 1 },
+        { id: 'ele_26', category: 'Electronics & Others', name: 'Color Sensor', packPrice: 91.0, packSize: 1 },
+        { id: 'ele_27', category: 'Electronics & Others', name: 'Touch Sensor', packPrice: 47.0, packSize: 1 },
+        { id: 'ele_28', category: 'Electronics & Others', name: 'Illuminance Sensor', packPrice: 47.0, packSize: 1 },
+        { id: 'ele_29', category: 'Electronics & Others', name: 'Pressure Sensor', packPrice: 41.0, packSize: 1 },
+        { id: 'ele_30', category: 'Electronics & Others', name: 'Vibration Motor Block', packPrice: 54.0, packSize: 1 },
+        { id: 'ele_31', category: 'Electronics & Others', name: 'Tilt Sensor', packPrice: 47.0, packSize: 1 },
+        { id: 'ele_32', category: 'Electronics & Others', name: 'Magnetic Sensor', packPrice: 47.0, packSize: 1 },
+        { id: 'ele_33', category: 'Electronics & Others', name: 'Sound Sensor', packPrice: 47.0, packSize: 1 },
+        { id: 'ele_34', category: 'Electronics & Others', name: 'Rotation Sensor', packPrice: 41.0, packSize: 1 },
+        { id: 'ele_35', category: 'Electronics & Others', name: 'Animal Series', packPrice: 31.0, packSize: 1 },
+        { id: 'ele_36', category: 'Electronics & Others', name: 'Non Woven Bag Coding', packPrice: 16.0, packSize: 1 },
+        { id: 'ele_37', category: 'Electronics & Others', name: 'Non Woven Bag Connect', packPrice: 16.0, packSize: 1 },
+        { id: 'ele_38', category: 'Electronics & Others', name: 'Key Ring', packPrice: 7.0, packSize: 1 },
+        { id: 'ele_39', category: 'Electronics & Others', name: 'Ball', packPrice: 2.0, packSize: 1 },
+        { id: 'ele_40', category: 'Electronics & Others', name: 'Rubber Band Red (10)', packPrice: 7.0, packSize: 1 },
+        { id: 'ele_41', category: 'Electronics & Others', name: 'Ultra Small Rubber Band (10)', packPrice: 7.0, packSize: 1 },
+        { id: 'ele_42', category: 'Electronics & Others', name: 'Parts Bucket', packPrice: 7.0, packSize: 1 }
+    ];
+
+    const catalog = rawCatalog.map(item => ({
+        ...item,
+        price: item.packPrice / item.packSize
+    }));
+
+    function calcSubtotal(qty, unitPrice) {
+        return Math.round((qty * unitPrice) * 100) / 100;
+    }
+
+    let activeCategory = 'All';
+    let quantities = {};
+    catalog.forEach(item => quantities[item.id] = 0);
+
+    let records = [];
+    let authPin = sessionStorage.getItem('ztBranchPin') || '';
+    let userRole = sessionStorage.getItem('ztBranchRole') || 'view';
+    let staffName = sessionStorage.getItem('ztBranchStaffName') || '';
+    let loggedInBranch = sessionStorage.getItem('ztBranchKey') || '';
+    let isSaving = false;
+    let showPacking = false;
+
+    function initBranchDropdowns() {
+        const orderSel = document.getElementById('orderBranchSelect');
+        Object.entries(BRANCHES).forEach(([key, info]) => {
+            const opt = document.createElement('option');
+            opt.value = key;
+            opt.textContent = `${info.name} (${info.currency})`;
+            orderSel.appendChild(opt);
+        });
+
+        const urlBranch = new URLSearchParams(window.location.search).get('branch');
+        const savedBranch = localStorage.getItem('ztSelectedBranch');
+        const initialBranch = (urlBranch && BRANCHES[urlBranch]) ? urlBranch
+            : (savedBranch && BRANCHES[savedBranch]) ? savedBranch
+            : 'MY_Kulai_HQ';
+
+        document.getElementById('branchSelect').value = initialBranch;
+        orderSel.value = initialBranch;
+        updateBranchHeaderUI();
+    }
+
+    function getActiveBranchKey() {
+        return document.getElementById('branchSelect').value;
+    }
+
+    function getFormCurrency() {
+        const key = (userRole === 'host') ? document.getElementById('orderBranchSelect').value : getActiveBranchKey();
+        return (BRANCHES[key] && BRANCHES[key].currency) || 'RM';
+    }
+
+    function updateBranchHeaderUI() {
+        const bKey = getActiveBranchKey();
+        const info = BRANCHES[bKey];
+        const addrEl = document.getElementById('branchAddressText');
+        const currEl = document.getElementById('branchCurrencyText');
+        const noticeName = document.getElementById('noticeBranchName');
+        const tableTitle = document.getElementById('tableBranchTitle');
+
+        if (bKey === 'ALL') {
+            addrEl.textContent = '🏢 Kulai HQ Master Warehouse View (All 18 Branches Across Malaysia & Brunei)';
+            currEl.textContent = '💱 Currency: RM / BND';
+            noticeName.textContent = 'all branches';
+            tableTitle.textContent = 'All Branches';
+        } else if (info) {
+            addrEl.textContent = `🏢 Shipping Address: ${info.address}`;
+            currEl.textContent = `💱 Currency: ${info.currency}`;
+            noticeName.textContent = info.name;
+            tableTitle.textContent = info.name;
+            document.getElementById('orderBranchSelect').value = bKey;
+        }
+
+        const c = getFormCurrency();
+        document.getElementById('customCurrLabel').textContent = c;
+        document.getElementById('liveCurrLabel').textContent = c;
+        renderCatalog();
+        updateLiveSummary();
+    }
+
+    function onOrderBranchSelectChange() {
+        const c = getFormCurrency();
+        document.getElementById('customCurrLabel').textContent = c;
+        document.getElementById('liveCurrLabel').textContent = c;
+        renderCatalog();
+        updateLiveSummary();
+    }
+
+    function onBranchChanged() {
+        const bKey = getActiveBranchKey();
+        if (bKey !== 'ALL') {
+            localStorage.setItem('ztSelectedBranch', bKey);
+        }
+        if (userRole === 'branch' && loggedInBranch !== bKey) {
+            lockAdmin();
+            return;
+        }
+        updateBranchHeaderUI();
+        loadFromDatabase();
+    }
+
+    function setDbStatus(text) {
+        document.getElementById('dbStatusText').textContent = text;
+    }
+
+    function applyRoleUI() {
+        const badge = document.getElementById('modeBadge');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const lockBtn = document.getElementById('lockBtn');
+        const openSheetBtn = document.getElementById('openSheetBtn');
+        const togglePackBtn = document.getElementById('togglePackBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const allOpt = document.getElementById('allBranchesOpt');
+        const targetGroup = document.getElementById('targetBranchFormGroup');
+        const form = document.getElementById('recordForm');
+        const publicBtns = document.getElementById('publicBtnGroup');
+        const notice = document.getElementById('viewOnlyNotice');
+        const adminCols = document.querySelectorAll('.admin-col');
+
+        if (userRole === 'host') {
+            badge.textContent = `👑 ${staffName}`;
+            badge.className = 'mode-pill mode-host';
+            unlockBtn.classList.add('admin-only-hidden');
+            lockBtn.classList.remove('admin-only-hidden');
+            openSheetBtn.classList.remove('admin-only-hidden');
+            togglePackBtn.classList.remove('admin-only-hidden');
+            clearAllBtn.classList.remove('admin-only-hidden');
+            allOpt.disabled = false;
+            targetGroup.classList.remove('admin-only-hidden');
+            form.classList.remove('admin-only-hidden');
+            publicBtns.classList.add('admin-only-hidden');
+            notice.classList.add('admin-only-hidden');
+            adminCols.forEach(el => el.classList.remove('admin-only-hidden'));
+        } else if (userRole === 'branch') {
+            badge.textContent = `🔓 ${staffName}`;
+            badge.className = 'mode-pill mode-branch';
+            unlockBtn.classList.add('admin-only-hidden');
+            lockBtn.classList.remove('admin-only-hidden');
+            openSheetBtn.classList.add('admin-only-hidden');
+            togglePackBtn.classList.remove('admin-only-hidden');
+            clearAllBtn.classList.add('admin-only-hidden');
+            allOpt.disabled = true;
+            targetGroup.classList.add('admin-only-hidden');
+            form.classList.remove('admin-only-hidden');
+            publicBtns.classList.add('admin-only-hidden');
+            notice.classList.add('admin-only-hidden');
+            adminCols.forEach(el => el.classList.remove('admin-only-hidden'));
+        } else {
+            badge.textContent = '🔒 View-Only';
+            badge.className = 'mode-pill mode-view';
+            unlockBtn.classList.remove('admin-only-hidden');
+            lockBtn.classList.add('admin-only-hidden');
+            openSheetBtn.classList.add('admin-only-hidden');
+            togglePackBtn.classList.add('admin-only-hidden');
+            clearAllBtn.classList.add('admin-only-hidden');
+            allOpt.disabled = true;
+            if (getActiveBranchKey() === 'ALL') {
+                document.getElementById('branchSelect').value = 'MY_Kulai_HQ';
+                updateBranchHeaderUI();
+            }
+            form.classList.add('admin-only-hidden');
+            publicBtns.classList.remove('admin-only-hidden');
+            notice.classList.remove('admin-only-hidden');
+            adminCols.forEach(el => el.classList.add('admin-only-hidden'));
+            document.getElementById('packingPanel').classList.add('admin-only-hidden');
+        }
+        renderTable();
+    }
+
+    function togglePackingPanel() {
+        showPacking = !showPacking;
+        const panel = document.getElementById('packingPanel');
+        panel.classList.toggle('admin-only-hidden', !showPacking);
+        if (showPacking) renderPackingSummary();
+    }
+
+    function computePickingList() {
+        const totals = {};
+        records.forEach(rec => {
+            if ((rec.packingStatus || 'To Pack') !== 'To Pack') return;
+            const summary = rec.itemsSummary || '';
+            summary.split(', ').forEach(part => {
+                const m = part.match(/^(.+?)\s+x(\d+)\s+\(/);
+                if (m) {
+                    const itemName = m[1].trim();
+                    const qty = parseInt(m[2], 10) || 0;
+                    totals[itemName] = (totals[itemName] || 0) + qty;
+                } else if (part.trim()) {
+                    totals[part.trim()] = (totals[part.trim()] || 0) + 1;
+                }
+            });
+        });
+        return Object.entries(totals).sort((a, b) => b[1] - a[1]);
+    }
+
+    function renderPackingSummary() {
+        const grid = document.getElementById('packingGrid');
+        const bKey = getActiveBranchKey();
+        document.getElementById('packingPanelTitle').textContent =
+            bKey === 'ALL'
+                ? '📦 Kulai HQ Consolidated Picking List (All Branches "To Pack")'
+                : `📦 Picking List for ${(BRANCHES[bKey] && BRANCHES[bKey].name) || bKey} ("To Pack")`;
+
+        const items = computePickingList();
+        if (items.length === 0) {
+            grid.innerHTML = '<div style="color:#666;font-size:13px;">All orders are already packed!</div>';
+            return;
+        }
+        grid.innerHTML = items.map(([name, qty]) => `
+            <div class="pack-chip">
+                <span>${name}</span>
+                <strong>× ${qty}</strong>
+            </div>
+        `).join('');
+    }
+
+    function openPinModal() {
+        const bKey = getActiveBranchKey();
+        const bName = (BRANCHES[bKey] && BRANCHES[bKey].name) || 'Branch';
+        document.getElementById('pinModalTitle').textContent = `Login: ${bName}`;
+        document.getElementById('pinError').textContent = '';
+        document.getElementById('pinInput').value = '';
+        document.getElementById('pinModal').classList.add('open');
+        setTimeout(() => document.getElementById('pinInput').focus(), 50);
+    }
+
+    function closePinModal() {
+        document.getElementById('pinModal').classList.remove('open');
+    }
+
+    async function submitPin() {
+        const entered = document.getElementById('pinInput').value.trim();
+        const bKey = getActiveBranchKey();
+        const errorEl = document.getElementById('pinError');
+        const btn = document.getElementById('pinSubmitBtn');
+
+        if (!entered) {
+            errorEl.textContent = 'Please enter your PIN.';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Checking...';
+        errorEl.textContent = '';
+
+        try {
+            const url = `${GOOGLE_SCRIPT_URL}?action=verifyPin&branchKey=${encodeURIComponent(bKey)}&pin=${encodeURIComponent(entered)}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data.ok) {
+                authPin = entered;
+                userRole = data.role;
+                staffName = data.staffName;
+                loggedInBranch = data.branchKey;
+                sessionStorage.setItem('ztBranchPin', authPin);
+                sessionStorage.setItem('ztBranchRole', userRole);
+                sessionStorage.setItem('ztBranchStaffName', staffName);
+                sessionStorage.setItem('ztBranchKey', loggedInBranch);
+                closePinModal();
+                applyRoleUI();
+                if (userRole === 'host') {
+                    document.getElementById('branchSelect').value = 'ALL';
+                    updateBranchHeaderUI();
+                    loadFromDatabase();
+                }
+            } else {
+                errorEl.textContent = data.message || 'Invalid PIN for this branch.';
+            }
+        } catch (err) {
+            errorEl.textContent = 'Network error checking PIN. Please try again.';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Unlock';
+        }
+    }
+
+    function lockAdmin() {
+        authPin = '';
+        userRole = 'view';
+        staffName = '';
+        loggedInBranch = '';
+        showPacking = false;
+        sessionStorage.removeItem('ztBranchPin');
+        sessionStorage.removeItem('ztBranchRole');
+        sessionStorage.removeItem('ztBranchStaffName');
+        sessionStorage.removeItem('ztBranchKey');
+        applyRoleUI();
+        loadFromDatabase();
+    }
+
+    async function loadFromDatabase(silent = false) {
+        if (isSaving) return;
+        const bKey = getActiveBranchKey();
+        if (!silent) setDbStatus('Syncing with HQ Sheet...');
+
+        try {
+            const url = `${GOOGLE_SCRIPT_URL}?action=list&branchKey=${encodeURIComponent(bKey)}&_t=${Date.now()}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data.ok && Array.isArray(data.records)) {
+                records = data.records;
+                const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                setDbStatus(`✓ Live (${nowStr})`);
+                renderTable();
+                if (showPacking) renderPackingSummary();
+            } else {
+                setDbStatus('⚠ Could not read HQ Sheet');
+            }
+        } catch (err) {
+            setDbStatus('Offline (Retrying...)');
+        }
+    }
+
+    async function postAction(payload) {
+        isSaving = true;
+        setDbStatus('Saving to HQ Sheet...');
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    ...payload,
+                    pin: authPin
+                })
+            });
+            const data = await res.json();
+            if (!data.ok) {
+                alert(data.message || 'Authorization failed.');
+                lockAdmin();
+            }
+            isSaving = false;
+            await loadFromDatabase();
+            return data.ok;
+        } catch (err) {
+            isSaving = false;
+            alert('Network error. Please check internet connection.');
+            return false;
+        }
+    }
+
+    function setCategory(category, btnElement) {
+        activeCategory = category;
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+        renderCatalog();
+    }
+
+    function renderCatalog() {
+        const itemList = document.getElementById('itemList');
+        const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+        const curr = getFormCurrency();
+        itemList.innerHTML = '';
+
+        const filtered = catalog.filter(item => {
+            const matchesSearch = item.name.toLowerCase().includes(keyword);
+            if (!matchesSearch) return false;
+            if (activeCategory === 'All') return true;
+            if (activeCategory === 'Selected') return (quantities[item.id] || 0) > 0;
+            return item.category === activeCategory;
+        });
+
+        if (filtered.length === 0) {
+            itemList.innerHTML = '<div style="padding: 15px; color: #777;">No matching items found.</div>';
+            return;
+        }
+
+        filtered.forEach(item => {
+            const qty = quantities[item.id] || 0;
+            const card = document.createElement('div');
+            card.id = `card_${item.id}`;
+            card.className = 'item-card' + (qty > 0 ? ' selected' : '');
+            const priceLabel = item.packSize > 1
+                ? `${curr} ${item.price.toFixed(2)} / pc <span style="color:#7f8c8d;font-weight:400;">(${item.packSize} pcs = ${curr} ${item.packPrice.toFixed(2)})</span>`
+                : `${curr} ${item.price.toFixed(2)}`;
+            const packBtn = item.packSize > 1
+                ? `<button type="button" class="qty-btn" style="width:auto;padding:0 6px;font-size:11px;" onclick="changeQty('${item.id}', ${item.packSize})">+${item.packSize}</button>`
+                : '';
+            card.innerHTML = `
+                <div class="item-info">
+                    <span class="item-badge">${item.category}</span>
+                    <span class="item-name">${item.name}</span>
+                    <span class="item-price">${priceLabel}</span>
+                </div>
+                <div class="qty-controls">
+                    <button type="button" class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
+                    <input type="number" class="qty-input" id="qty_${item.id}" min="0" value="${qty}" oninput="setQty('${item.id}', this.value)" onfocus="this.select()">
+                    <button type="button" class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+                    ${packBtn}
+                </div>
+            `;
+            itemList.appendChild(card);
+        });
+    }
+
+    function changeQty(itemId, delta) {
+        const newQty = Math.max(0, (quantities[itemId] || 0) + delta);
+        quantities[itemId] = newQty;
+        const inputEl = document.getElementById(`qty_${itemId}`);
+        const cardEl = document.getElementById(`card_${itemId}`);
+        if (inputEl) inputEl.value = newQty;
+        if (cardEl) cardEl.classList.toggle('selected', newQty > 0);
+        if (activeCategory === 'Selected' && newQty === 0) renderCatalog();
+        updateLiveSummary();
+    }
+
+    function setQty(itemId, rawValue) {
+        const parsed = parseInt(rawValue, 10);
+        const newQty = isNaN(parsed) || parsed < 0 ? 0 : parsed;
+        quantities[itemId] = newQty;
+        const cardEl = document.getElementById(`card_${itemId}`);
+        if (cardEl) cardEl.classList.toggle('selected', newQty > 0);
+        updateLiveSummary();
+    }
+
+    function buildSelectionSummary() {
+        const curr = getFormCurrency();
+        let parts = [];
+        let total = 0;
+
+        catalog.forEach(item => {
+            const qty = quantities[item.id] || 0;
+            if (qty > 0) {
+                const sub = calcSubtotal(qty, item.price);
+                total = Math.round((total + sub) * 100) / 100;
+                parts.push(`${item.name} x${qty} (${curr} ${sub.toFixed(2)})`);
+            }
+        });
+
+        const customItem = document.getElementById('customItem').value.trim();
+        const customPrice = parseFloat(document.getElementById('customPrice').value) || 0;
+        if (customItem || customPrice > 0) {
+            const label = customItem || 'Other Item';
+            total = Math.round((total + customPrice) * 100) / 100;
+            parts.push(`${label} (${curr} ${customPrice.toFixed(2)})`);
+        }
+
+        return { parts, total };
+    }
+
+    function updateLiveSummary() {
+        const { parts, total } = buildSelectionSummary();
+        document.getElementById('liveItemsText').textContent =
+            parts.length > 0 ? parts.join(' | ') : 'No items selected';
+        document.getElementById('liveTotalAmount').textContent = total.toFixed(2);
+    }
+
+    function setCurrentDateTime() {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('recordDateTime').value = now.toISOString().slice(0, 16);
+    }
+
+    function formatDateTimes(rec) {
+        if (rec.dateTimes && rec.dateTimes.length > 0) {
+            return rec.dateTimes.map(dt => dt.replace('T', ' ')).join(' | ');
+        }
+        return (rec.dateTime || '').replace('T', ' ');
+    }
+
+    async function togglePayment(index) {
+        if (userRole === 'view') return;
+        const rec = records[index];
+        const nextStatus = (rec.paymentStatus === 'Paid') ? 'Unpaid' : 'Paid';
+        rec.paymentStatus = nextStatus;
+        renderTable();
+        await postAction({
+            action: 'updateStatus',
+            branchKey: rec.branchKey,
+            studentName: rec.studentName,
+            paymentStatus: nextStatus
+        });
+    }
+
+    async function cyclePackingStatus(index) {
+        if (userRole === 'view') return;
+        const rec = records[index];
+        const cur = rec.packingStatus || 'To Pack';
+        let next = 'Packed';
+        if (cur === 'To Pack') next = 'Packed';
+        else if (cur === 'Packed') next = 'Done';
+        else next = 'To Pack';
+
+        rec.packingStatus = next;
+        renderTable();
+        if (showPacking) renderPackingSummary();
+        await postAction({
+            action: 'updateStatus',
+            branchKey: rec.branchKey,
+            studentName: rec.studentName,
+            packingStatus: next
+        });
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('recordsBody');
+        const studentFilter = (document.getElementById('studentFilterInput').value || '').trim().toLowerCase();
+        const packFilter = document.getElementById('packFilter').value;
+        const canEdit = (userRole === 'branch' || userRole === 'host');
+        tbody.innerHTML = '';
+
+        let visibleCount = 0;
+
+        records.forEach((rec, index) => {
+            const pStatus = rec.packingStatus || 'To Pack';
+            if (packFilter !== 'ALL' && pStatus !== packFilter) return;
+            if (studentFilter && !rec.studentName.toLowerCase().includes(studentFilter)) return;
+            visibleCount++;
+
+            const isPaid = (rec.paymentStatus || 'Unpaid') === 'Paid';
+            const isDone = (pStatus === 'Done');
+            const curr = rec.currency || 'RM';
+
+            const row = document.createElement('tr');
+            if (isDone) row.className = 'row-done';
+
+            let packBadgeClass = 'badge-topack';
+            let packLabel = '⏳ To Pack';
+            if (pStatus === 'Packed') { packBadgeClass = 'badge-packed'; packLabel = '📦 Packed'; }
+            if (pStatus === 'Done') { packBadgeClass = 'badge-done'; packLabel = '✓ Arrived / Done'; }
+
+            const paymentHtml = canEdit
+                ? `<button type="button" class="status-btn ${isPaid ? 'badge-paid' : 'badge-unpaid'}" onclick="togglePayment(${index})">${isPaid ? 'Paid' : 'Unpaid'}</button>`
+                : `<span class="status-btn readonly ${isPaid ? 'badge-paid' : 'badge-unpaid'}">${isPaid ? 'Paid' : 'Unpaid'}</span>`;
+
+            const packingHtml = canEdit
+                ? `<button type="button" class="status-btn ${packBadgeClass}" onclick="cyclePackingStatus(${index})" title="Click to advance: To Pack → Packed → Done">${packLabel}</button>`
+                : `<span class="status-btn readonly ${packBadgeClass}">${packLabel}</span>`;
+
+            const actionCellHtml = canEdit
+                ? `<td><button class="delete-row-btn" onclick="deleteRecord(${index})">Delete</button></td>`
+                : ``;
+
+            row.innerHTML = `
+                <td>${visibleCount}</td>
+                <td><strong>${rec.branchName || rec.branchKey}</strong></td>
+                <td>${formatDateTimes(rec)}</td>
+                <td>${rec.studentName}</td>
+                <td>${rec.itemsSummary || ''}</td>
+                <td>${curr} ${Number(rec.total || 0).toFixed(2)}</td>
+                <td>${paymentHtml}</td>
+                <td>${packingHtml}</td>
+                <td style="font-size:12px;color:#555;">${rec.updatedBy || '-'}</td>
+                ${actionCellHtml}
+            `;
+            tbody.appendChild(row);
+        });
+
+        document.getElementById('recordCount').textContent = visibleCount;
+    }
+
+    function resetQuantities() {
+        catalog.forEach(item => quantities[item.id] = 0);
+        document.getElementById('searchInput').value = '';
+        renderCatalog();
+        updateLiveSummary();
+    }
+
+    document.getElementById('recordForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (userRole === 'view') return;
+
+        const targetBranch = (userRole === 'host')
+            ? document.getElementById('orderBranchSelect').value
+            : getActiveBranchKey();
+        const studentName = document.getElementById('studentName').value.trim();
+        const paymentStatus = document.getElementById('paymentStatus').value;
+        const dateTime = document.getElementById('recordDateTime').value;
+        const { parts, total } = buildSelectionSummary();
+
+        if (parts.length === 0) {
+            alert('Please select at least one item quantity or enter a custom item.');
+            return;
+        }
+
+        const btn = document.getElementById('submitRecordBtn');
+        btn.disabled = true;
+        btn.textContent = 'Sending to Kulai HQ...';
+
+        const ok = await postAction({
+            action: 'addPurchase',
+            branchKey: targetBranch,
+            studentName: studentName,
+            dateTime: dateTime,
+            itemsSummary: parts.join(', '),
+            addedTotal: total,
+            paymentStatus: paymentStatus
+        });
+
+        btn.disabled = false;
+        btn.textContent = '+ Submit Branch Order to HQ';
+
+        if (ok) {
+            document.getElementById('studentName').value = '';
+            document.getElementById('customItem').value = '';
+            document.getElementById('customPrice').value = '';
+            resetQuantities();
+            setCurrentDateTime();
+        }
+    });
+
+    async function deleteRecord(index) {
+        if (userRole === 'view') return;
+        const rec = records[index];
+        if (!confirm(`Delete record for ${rec.studentName} (${rec.branchName})?`)) return;
+        await postAction({
+            action: 'deleteRow',
+            branchKey: rec.branchKey,
+            studentName: rec.studentName
+        });
+    }
+
+    async function clearAllRecords() {
+        if (userRole !== 'host') return;
+        if (confirm('Clear ALL branch records from the Kulai HQ Master Sheet? This cannot be undone.')) {
+            await postAction({ action: 'clearAll', branchKey: 'ALL' });
+        }
+    }
+
+    function exportToExcel() {
+        if (records.length === 0) {
+            alert('No records available to export.');
+            return;
+        }
+        const excelData = records.map((rec, index) => ({
+            'No.': index + 1,
+            'Branch': rec.branchName || rec.branchKey,
+            'Date & Time': formatDateTimes(rec),
+            'Student Name': rec.studentName,
+            'Items Purchased': rec.itemsSummary || '',
+            'Currency': rec.currency || 'RM',
+            'Total Amount': rec.total,
+            'Payment Status': rec.paymentStatus || 'Unpaid',
+            'Packing Status': rec.packingStatus || 'To Pack',
+            'Updated By': rec.updatedBy || ''
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Branch_Orders');
+        const fileTag = getActiveBranchKey();
+        XLSX.writeFile(workbook, `ZeniusTech_PROBO_${fileTag}.xlsx`);
+    }
+
+    function exportPackingList() {
+        const items = computePickingList();
+        if (items.length === 0) {
+            alert('No "To Pack" items to export.');
+            return;
+        }
+        const sheetRows = items.map(([name, qty], i) => ({
+            'No.': i + 1,
+            'PROBO Item Name': name,
+            'Total Quantity to Pick': qty,
+            'Packed Check': '[   ]'
+        }));
+        const ws = XLSX.utils.json_to_sheet(sheetRows);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'HQ_Picking_List');
+        XLSX.writeFile(wb, `Kulai_HQ_Picking_List_${getActiveBranchKey()}.xlsx`);
+    }
+
+    initBranchDropdowns();
+    setCurrentDateTime();
+    applyRoleUI();
+    loadFromDatabase();
+
+    setInterval(() => {
+        if (!document.hidden && !isSaving) {
+            loadFromDatabase(true);
+        }
+    }, 15000);
+</script>
+
+</body>
+</html>
